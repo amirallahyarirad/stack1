@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  db:   
+    container_name: postgres1
+    image: postgres:alpine3.17
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5432:5432"
+    volumes:
+      - /data/redis/logs:/var/log
+      - /data/redis/data:/root/redis
+
+    environment:
+      - POSTGRES_PASSWORD=password
+
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+
