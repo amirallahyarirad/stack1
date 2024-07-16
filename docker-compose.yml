@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.4.0
+    volumes: 
+      - mysqlvol1:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: password
+    networks:
+      - webnetwork
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: password
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpressvol1:/var/www/html
+    networks:
+      - webnetwork
+  phpmyadmin:
+    image: phpmyadmin:5.2.1
+    ports:
+      - "8080:80"
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db:db
+    #environment:
+      #PMA_HOST: db
+      #PMA_VERBOSE: db
+      #PMA_PORT: 3306
+      #PMA_ARBITRARY: 1
+    networks:
+      - webnetwork
+      
+volumes:
+  mysqlvol1:
+  wordpressvol1:
+networks:
+  webnetwork:
+    driver: bridge
+    name: webnetwork1
